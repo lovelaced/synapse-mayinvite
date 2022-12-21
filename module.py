@@ -12,7 +12,7 @@ class MayInviteResource(Resource):
 
     def render_GET(self, request: Request):
         request.setHeader(b"Content-Type", b"application/json")
-        return json.dumps({"message": "Sorry, you aren't allowed to invite this user. Please use email instead."        })
+        return json.dumps({"message": "This identity doesn't accept public invitations. If you need to get in touch, please use ", config.shielded_user.email, ". Kind regards."})
 
 
 class MayInviteModule:
@@ -34,7 +34,7 @@ class MayInviteModule:
     async def user_may_invite(self, sender: str) -> bool:
         # Check if the user trying to invite is from a different homeserver
         if sender != self.api.hs.hostname:
-            if target == config.username_blocked_from_invites:
+            if target == shielded_user.mxid:
                 return False
         return True
 

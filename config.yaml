@@ -1,2 +1,3 @@
-username_blocked_from_invites:
-  - "@test:matrix.org"
+shielded_user:
+  mxid: "@test:matrix.org"
+  email: "test@gmail.com
