@@ -1,3 +1,5 @@
-shielded_user:
-  mxid: "@test:matrix.org"
-  email: "test@gmail.com
+shielded_users:
+  - mxid: "@test:matrix.org"
+    email: "test@gmail.com"
+  - mxid: "@test2:matrix.org"
+    email:  "test2@gmail.com"
