@@ -16,7 +16,7 @@ class MayInviteResource(Resource):
         return json.dumps({"message": "This identity doesn't accept public invitations. If you need to get in touch, please use " + self.config.shielded_user.email + ". Kind regards."})
 
 
-class SynapseMayInviteModule:
+class SynapseMayInvite:
     def __init__(self, config: dict, api: ModuleApi):
         self.config = config
         self.api = api
