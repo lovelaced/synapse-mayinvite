@@ -1,5 +1,18 @@
+# This module blocks certain users from receiving invites from users on other homeservers.
+# To configure the module, specify a list of shielded users in the "shielded_users" field. Each shielded user should be identified by a unique identifier and defined by their Matrix ID and email address. The Matrix ID is used to identify the user in Matrix, and the email address is used to provide a way for users to contact the shielded user if they need to.
+# Example configuration:
+# shielded_users:
+#   user1:
+#     - mxid: "@test:matrix.org"
+#     - email: "test@gmail.com"
+#   user2:
+#     - mxid: "@test2:matrix.org"
+#     - email:  "test2@gmail.com"
 shielded_users:
-  - mxid: "@test:matrix.org"
-    email: "test@gmail.com"
-  - mxid: "@test2:matrix.org"
-    email:  "test2@gmail.com"
+  user1:
+    - mxid: "@test:matrix.org"
+    - email: "test@gmail.com"
+  user2:
+    - mxid: "@test2:matrix.org"
+    - email:  "test2@gmail.com"
+

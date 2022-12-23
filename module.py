@@ -5,50 +5,48 @@ from synapse.types import UserID
 from twisted.web.resource import Resource
 from twisted.web.server import Request
 from synapse.module_api import ModuleApi
-from typing import List
-
-class ShieldedUser:
-    def __init__(self, mxid: str, email: str):
-        self.mxid = mxid
-        self.email = email
+from typing import Dict
 
 class MayInviteResource(Resource):
     def __init__(self, config):
+        # Initialize the base Resource class
         super(MayInviteResource, self).__init__()
+        # Store the configuration
         self.config = config
 
     def render_GET(self, request: Request):
+        # Set the content type of the response to application/json
         request.setHeader(b"Content-Type", b"application/json")
-        return json.dumps({"message": "This identity doesn't accept public invitations. If you need to get in touch, please use " + self.config.shielded_user.email + ". Kind regards."})
-
+        # Get the target user's Matrix ID from the request arguments
+        target = request.args[b"target"][0].decode("utf-8")
+        # Return a message indicating that the user doesn't accept public invitations
+        return json.dumps({"message": "This identity doesn't accept public invitations. If you need to get in touch, please use " + self.config["shielded_users"][target] + ". Kind regards."})
 
 class SynapseMayInvite:
     def __init__(self, config: dict, api: ModuleApi):
+        # Store the configuration and API object
         self.config = config
         self.api = api
 
-        self.api.register_web_resource(
-            path="/_synapse/client/demo/invite",
-            resource=MayInviteResource(self.config),
-        )
+        # Register the user_may_invite callback function to be called for every invite request
         self.api.register_spam_checker_callbacks(
             user_may_invite=self.user_may_invite,
         )
 
     @staticmethod
     def parse_config(config: dict) -> dict:
-        shielded_users = []
-        for user in config["shielded_users"]:
-            shielded_users.append(ShieldedUser(user["mxid"], user["email"]))
+        # Create a new dictionary with the Matrix IDs of the shielded users as keys and their email addresses as values
+        shielded_users = {}
+        for user, data in config["shielded_users"].items():
+            shielded_users[data[0]["mxid"]] = data[1]["email"]
+        # Update the config attribute with the new dictionary
         config["shielded_users"] = shielded_users
         return config
 
-    async def user_may_invite(self, sender: str, target: str, shielded_users: List[ShieldedUser]) -> bool:
+    async def user_may_invite(self, sender: str, target: str, shielded_users: Dict[str, str]) -> bool:
         # Check if the user trying to invite is from a different homeserver
         if not self.api.is_mine(sender):
             # Check if the target user is in the list of shielded users
-            for shielded_user in shielded_users:
-                if target == shielded_user.mxid:
-                    return False
+            if target in shielded_users:
+                return False
         return True
-
