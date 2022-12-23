@@ -5,6 +5,7 @@ from synapse.types import UserID
 from twisted.web.resource import Resource
 from twisted.web.server import Request
 from synapse.module_api import ModuleApi
+from typing import List
 
 class ShieldedUser:
     def __init__(self, mxid: str, email: str):
