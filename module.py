@@ -36,7 +36,7 @@ class SynapseMayInvite:
         )
 
     @staticmethod
-    def parse_config(config):
+    def parse_config(config: dict) -> dict:
         shielded_users = []
         for user in config["shielded_users"]:
             shielded_users.append(ShieldedUser(user["mxid"], user["email"]))
@@ -51,3 +51,4 @@ class SynapseMayInvite:
                 if target == shielded_user.mxid:
                     return False
         return True
+
