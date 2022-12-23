@@ -45,7 +45,7 @@ class SynapseMayInvite:
 
     async def user_may_invite(self, sender: str, target: str, shielded_users: List[ShieldedUser]) -> bool:
         # Check if the user trying to invite is from a different homeserver
-        if sender != self.api.hs.hostname:
+        if not self.api.is_mine(sender):
             # Check if the target user is in the list of shielded users
             for shielded_user in shielded_users:
                 if target == shielded_user.mxid:
