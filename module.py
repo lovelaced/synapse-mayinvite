@@ -1,4 +1,5 @@
 import json
+import logging
 
 from synapse.api.errors import SynapseError
 from synapse.types import UserID
@@ -6,6 +7,8 @@ from twisted.web.resource import Resource
 from twisted.web.server import Request
 from synapse.module_api import ModuleApi
 from typing import Dict
+
+logger = logging.getLogger(__name__)
 
 class MayInviteResource(Resource):
     def __init__(self, config):
@@ -32,6 +35,7 @@ class SynapseMayInvite:
         self.api.register_spam_checker_callbacks(
             user_may_invite=self.user_may_invite,
         )
+        logger.info("Registered spam checker callbacks")
 
     @staticmethod
     def parse_config(config: dict) -> dict:
@@ -41,6 +45,7 @@ class SynapseMayInvite:
             shielded_users[data[0]["mxid"]] = data[1]["email"]
         # Update the config attribute with the new dictionary
         config["shielded_users"] = shielded_users
+        logger.info("Parsed shielded users: %s", shielded_users)
         return config
 
     async def user_may_invite(self, sender: str, target: str, shielded_users: Dict[str, str]) -> bool:
@@ -48,5 +53,8 @@ class SynapseMayInvite:
         if not self.api.is_mine(sender):
             # Check if the target user is in the list of shielded users
             if target in shielded_users:
+                logger.info("Blocked invite from %s to shielded user %s", sender, target)
                 return False
+        logger.info("Allowed invite from %s to %s", sender, target)
         return True
+

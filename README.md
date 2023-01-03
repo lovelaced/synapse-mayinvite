@@ -1,6 +1,6 @@
 # Matrix-Synapse Shielded User Invites Module
 
-This module is a matrix-synapse server module that blocks certain users from receiving invites from users on other homeservers. This is useful if you have a specific list of users that should not receive invites from users on other homeservers, for example if you want to protect the privacy of these users or if you have a legal requirement to do so.
+This module is a matrix-synapse server module that blocks certain users from receiving invites from users on other homeservers. This is useful if you have a specific list of users that should not receive invites from users on other homeservers, for example if you want to protect the privacy of these users.
 
 ## Usage
 
