@@ -49,6 +49,10 @@ class SynapseMayInvite:
         return config
 
     async def user_may_invite(self, sender: str, target: str, shielded_users: Dict[str, str]) -> bool:
+        logger.info("Config:")
+        logger.info(self.config)
+        logger.info("Shielded users:")
+        logger.info(shielded_users)
         # Check if the user trying to invite is from a different homeserver
         if not self.api.is_mine(sender):
             # Check if the target user is in the list of shielded users
