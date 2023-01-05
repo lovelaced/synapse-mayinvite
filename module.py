@@ -45,6 +45,7 @@ class SynapseMayInvite:
             shielded_users[data[0]["mxid"]] = data[1]["email"]
         # Update the config attribute with the new dictionary
         config["shielded_users"] = shielded_users
+        config["allowed_homeservers"] = ["fairydust.space"]
         logger.info("Parsed shielded users: %s", shielded_users)
         return config
 
@@ -55,11 +56,20 @@ class SynapseMayInvite:
         logger.info(shielded_users)
         shielded_mxids = list(self.config["shielded_users"].keys())
         # Check if the user trying to invite is from a different homeserver
-        if not self.api.is_mine(sender):
-            # Check if the target user is in the list of shielded users
-            if target in shielded_mxids:
-                logger.info("Blocked invite from %s to shielded user %s", sender, target)
-                return False
+        if self.api.is_mine(sender):
+            # Allow the invite if the sender is from the same homeserver
+            logger.info("Allowed invite from %s to %s", sender, target)
+            return True
+        # Check if the homeserver of the sender is in the list of allowed homeservers
+        sender_homeserver = UserID.from_string(sender).domain
+        if sender_homeserver in self.config["allowed_homeservers"]:
+            # Allow the invite if the sender is from an allowed homeserver
+            logger.info("Allowed invite from %s to %s", sender, target)
+            return True
+        # Check if the target user is in the list of shielded users
+        if target in shielded_mxids:
+            logger.info("Blocked invite from %s to shielded user %s", sender, target)
+            return False
         logger.info("Allowed invite from %s to %s", sender, target)
         return True
 
