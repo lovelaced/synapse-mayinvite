@@ -53,10 +53,11 @@ class SynapseMayInvite:
         logger.info(self.config)
         logger.info("Shielded users:")
         logger.info(shielded_users)
+        shielded_mxids = list(self.config["shielded_users"].keys())
         # Check if the user trying to invite is from a different homeserver
         if not self.api.is_mine(sender):
             # Check if the target user is in the list of shielded users
-            if target in shielded_users:
+            if target in shielded_mxids:
                 logger.info("Blocked invite from %s to shielded user %s", sender, target)
                 return False
         logger.info("Allowed invite from %s to %s", sender, target)
