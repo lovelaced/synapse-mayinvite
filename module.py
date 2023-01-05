@@ -45,20 +45,19 @@ class SynapseMayInvite:
             shielded_users[data[0]["mxid"]] = data[1]["email"]
         # Update the config attribute with the new dictionary
         config["shielded_users"] = shielded_users
-        config["allowed_homeservers"] = ["fairydust.space"]
-        logger.info("Parsed shielded users: %s", shielded_users)
+        config["allowed_homeservers"] = config.get("allowed_homeservers", [])
         return config
 
-    async def user_may_invite(self, sender: str, target: str, shielded_users: Dict[str, str]) -> bool:
-        logger.info("Config:")
-        logger.info(self.config)
+    async def user_may_invite(self, sender: str, target: str, room_id: str) -> bool:
         logger.info("Shielded users:")
-        logger.info(shielded_users)
+        logger.info(self.config["shielded_users"])
+        logger.info("Allowed homeservers:")
+        logger.info(self.config["allowed_homeservers"])
         shielded_mxids = list(self.config["shielded_users"].keys())
         # Check if the user trying to invite is from a different homeserver
         if self.api.is_mine(sender):
             # Allow the invite if the sender is from the same homeserver
-            logger.info("Allowed invite from %s to %s", sender, target)
+            logger.info("Allowed invite from %s to %s to %s", sender, target)
             return True
         # Check if the homeserver of the sender is in the list of allowed homeservers
         sender_homeserver = UserID.from_string(sender).domain
